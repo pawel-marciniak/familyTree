@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Home from './pages/Home';
-import { useStore } from 'vuex';
 
 const routes = [
     { path: '/login', component: Login, name: 'login' },

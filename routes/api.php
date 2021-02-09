@@ -17,6 +17,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('user', function () {
+        return response()->json(auth()->user());
+    });
+
     Route::get('family-trees', [FamilyTreeController::class, 'index']);
     Route::post('family-trees', [FamilyTreeController::class, 'store']);
 

@@ -117,7 +117,7 @@
                                     <button type="submit"
                                             class="btn btn-primary"
                                     >
-                                        Login
+                                        Register
                                     </button>
                                 </div>
                             </div>

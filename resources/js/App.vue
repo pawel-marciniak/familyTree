@@ -63,7 +63,13 @@
         setup() {
             const router = useRouter();
             const store = useStore();
-            const user = computed(() => store.getters.loggedUser);
+            const user = computed(() => {
+                if (store.state.user) {
+                    return store.state.user;
+                } else if (localStorage.getItem('user')) {
+                    return JSON.parse(localStorage.getItem('user'));
+                }
+            });
 
             const logout = async () => {
                 await axios.post('/api/logout');
