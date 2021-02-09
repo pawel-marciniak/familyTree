@@ -1,0 +1,34 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class AddNestedSetToPersonsTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::table('persons', function (Blueprint $table) {
+            $table->unsignedInteger('_lft')->after('parent_id');
+            $table->unsignedInteger('_rgt')->after('_lft');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::table('persons', function (Blueprint $table) {
+            $table->dropColumn('_lft');
+            $table->dropColumn('_rgt');
+        });
+    }
+}
