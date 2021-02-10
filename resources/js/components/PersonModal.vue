@@ -9,7 +9,7 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title">Family tree</h5>
+                                <h5 class="modal-title">Person</h5>
                                 <button type="button"
                                         class="close"
                                         data-dismiss="modal"
@@ -21,23 +21,6 @@
                             </div>
 
                             <div class="modal-body">
-                                <div class="form-group">
-                                    <label for="familyName">Family name</label>
-                                    <input v-model="familyName"
-                                           type="text"
-                                           class="form-control"
-                                           :class="{ 'is-invalid': errors.familyName }"
-                                           id="familyName"
-                                           name="familyName"
-                                    >
-
-                                    <span v-if="errors.familyName"
-                                          class="invalid-feedback"
-                                          role="alert"
-                                    >
-                                        <strong>{{ errors.familyName }}</strong>
-                                    </span>
-                                </div>
                                 <div class="form-group">
                                     <label for="personGender">Person gender</label>
                                     <select v-model="personGender"
@@ -120,7 +103,7 @@
                                 </button>
                                 <button type="button"
                                         class="btn btn-primary"
-                                        @click="saveFamily()"
+                                        @click="savePerson()"
                                 >
                                     Save
                                 </button>
@@ -139,22 +122,32 @@
     import { useField, useForm } from 'vee-validate';
 
     export default {
-        name: 'FamilyTreeModal',
+        name: 'PersonModal',
 
         props: {
             opened: {
                 type: Boolean,
                 default: false,
             },
-            familyTree: {
+            person: {
                 type: Object,
                 default: () => {},
+            },
+            parentPerson: {
+                type: Object,
+                default: () => {},
+            },
+            personType: {
+                type: String,
+                default: 'child',
+                validator(value) {
+                    return ['child', 'partner'].indexOf(value) !== -1
+                }
             }
         },
 
         setup(props, context) {
             const validationSchema = yup.object({
-                familyName: yup.string().required().label('Family name'),
                 personGender: yup.string().required().oneOf(['male', 'female']).label('Person gender'),
                 personName: yup.string().required().label('Person name'),
                 personSurname: yup.string().required().label('Person surname'),
@@ -166,7 +159,6 @@
             });
 
             const { value: personGender } = useField('personGender');
-            const { value: familyName } = useField('familyName');
             const { value: personName } = useField('personName');
             const { value: personSurname } = useField('personSurname');
             const { value: personBirthdate } = useField('personBirthdate');
@@ -175,27 +167,32 @@
                 context.emit('close');
             };
 
-            const saveFamily = handleSubmit(async (values) => {
-                const { data } = await axios.post('/api/family-trees', {
-                    name: values.familyName,
-                    personGender: values.personGender,
-                    personName: values.personName,
-                    personSurname: values.personSurname,
-                    personBirthdate: values.personBirthdate.split('.').reverse().join('-'),
-                });
+            const savePerson = handleSubmit(async (values) => {
+                let personData = {
+                    gender: values.personGender,
+                    name: values.personName,
+                    surname: values.personSurname,
+                    birthdate: values.personBirthdate.split('.').reverse().join('-'),
+                };
+
+                if (props.personType === 'partner') {
+                    personData.partner_id = props.parentPerson.id;
+                } else if(props.personType === 'child') {
+                    personData.parent_id = props.parentPerson.id;
+                }
+
+                const { data } = await axios.post('/api/persons', personData);
 
                 context.emit('saved', data.data)
             });
 
             watch(() => props.opened, () => {
-                if (props?.familyTree?.id) {
-                    familyName.value = props.familyTree.name;
-                    personGender.value = props.familyTree.headPerson.gender;
-                    personName.value = props.familyTree.headPerson.name;
-                    personSurname.value = props.familyTree.headPerson.surname;
-                    personBirthdate.value = props.familyTree.headPerson.birthdate;
+                if (props?.person?.id) {
+                    personGender.value = props.person.gender;
+                    personName.value = props.person.name;
+                    personSurname.value = props.person.surname;
+                    personBirthdate.value = props.person.birthdate;
                 } else {
-                    familyName.value = '';
                     personGender.value = '';
                     personName.value = '';
                     personSurname.value = '';
@@ -207,13 +204,12 @@
 
             return {
                 closeModal,
-                familyName,
                 personGender,
                 personName,
                 personSurname,
                 personBirthdate,
                 errors,
-                saveFamily,
+                savePerson,
             }
         }
     }

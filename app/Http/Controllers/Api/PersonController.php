@@ -28,7 +28,9 @@ class PersonController extends Controller
     public function store(Request $request)
     {
         $personData = $request->validate([
-            'parent_id' => 'required|exists:persons,id',
+            'parent_id' => 'exists:persons,id',
+            'partner_id' => 'exists:persons,id',
+            'gender' => 'required|in:male,female',
             'name' => 'required|max:100',
             'surname' => 'required|max:100',
             'birthdate' => 'required|date_format:Y-m-d',
@@ -43,6 +45,8 @@ class PersonController extends Controller
             ));
 
             $person->save();
+
+            $person->load('partner', 'children');
         } catch (\Exception $e) {
             report($e);
 
@@ -56,16 +60,16 @@ class PersonController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
     public function getPersonSubTree($id)
     {
-        $root = Person::where('owner_id', auth()->user()->id)
+        $personTree = Person::where('owner_id', auth()->user()->id)
+            ->with('partner.parent.children')
             ->descendantsAndSelf($id)
-            ->toTree()
-            ->firstOrFail();
+            ->toTree();
 
-        return response()->json($root);
+        return PersonResource::collection($personTree);
     }
 
     /**

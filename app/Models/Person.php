@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Kalnoy\Nestedset\NodeTrait;
 
 class Person extends Model
@@ -20,8 +21,8 @@ class Person extends Model
         return $this->belongsTo(self::class, 'parent_id');
     }
 
-    public function partner(): BelongsTo
+    public function partner(): HasOne
     {
-        return $this->belongsTo(self::class, 'partner_id');
+        return $this->hasOne(self::class, 'partner_id');
     }
 }

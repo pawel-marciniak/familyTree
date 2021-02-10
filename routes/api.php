@@ -16,13 +16,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth:sanctum,api')->group(function () {
     Route::get('user', function () {
         return response()->json(auth()->user());
     });
 
     Route::get('family-trees', [FamilyTreeController::class, 'index']);
+    Route::get('family-trees/{id}', [FamilyTreeController::class, 'show']);
     Route::post('family-trees', [FamilyTreeController::class, 'store']);
 
     Route::post('persons', [PersonController::class, 'store']);
+    Route::get('persons/{id}/tree', [PersonController::class, 'getPersonSubTree']);
 });

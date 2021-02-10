@@ -2,11 +2,13 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Home from './pages/Home';
+import FamilyTree from './pages/FamilyTree';
 
 const routes = [
+    { path: '/', component: Home, name: 'home' },
     { path: '/login', component: Login, name: 'login' },
     { path: '/register', component: Register, name: 'register' },
-    { path: '/', component: Home, name: 'home' },
+    { path: '/family-tree/:id', component: FamilyTree, name: 'family-tree' },
 ];
 
 const router = createRouter({

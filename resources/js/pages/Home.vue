@@ -17,7 +17,10 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="familyTree in familyTrees" :key="familyTree.id">
+                        <tr v-for="familyTree in familyTrees"
+                                     :key="familyTree.id"
+                                     @click="router.push({ name: 'family-tree', params: { id: familyTree.id } })"
+                        >
                             <td>{{ familyTree.name }}</td>
                         </tr>
                     </tbody>
@@ -35,6 +38,7 @@
 <script>
     import { ref, onMounted } from 'vue';
     import FamilyTreeModal from '../components/FamilyTreeModal';
+    import { useRouter } from 'vue-router';
 
     export default {
         name: 'Home',
@@ -45,6 +49,7 @@
             const familyTrees = ref([]);
             const familyTreesError = ref(null);
             const showModal = ref(false);
+            const router = useRouter();
 
             const fetchFamilyTrees = async () => {
                 try {
@@ -73,6 +78,7 @@
                 familyTreesError,
                 showModal,
                 saveFamily,
+                router,
             }
         }
     }

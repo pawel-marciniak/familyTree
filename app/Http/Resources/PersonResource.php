@@ -15,10 +15,13 @@ class PersonResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'id' => $this->id,
+            'gender' => $this->gender,
             'name' => $this->name,
             'surname' => $this->surname,
             'birthdate' => $this->birthdate,
-            'parent' => self::make($this->whenLoaded('parent')),
+            'children' => self::collection($this->whenLoaded('children')),
+            'parent' => ParentPersonResource::make($this->whenLoaded('parent')),
             'partner' => self::make($this->whenLoaded('partner')),
         ];
     }

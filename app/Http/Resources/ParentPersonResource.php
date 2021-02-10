@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class FamilyTreeResource extends JsonResource
+class ParentPersonResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,8 +16,12 @@ class FamilyTreeResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'gender' => $this->gender,
             'name' => $this->name,
-            'headPerson' => PersonResource::make($this->whenLoaded('headPerson')),
+            'surname' => $this->surname,
+            'birthdate' => $this->birthdate,
+            'parent' => $this->whenLoaded('parent'),
+            'partner' => self::make($this->whenLoaded('partner')),
         ];
     }
 }

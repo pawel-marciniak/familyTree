@@ -37,6 +37,7 @@ class FamilyTreeController extends Controller
     {
         $request->validate([
             'name' => 'required',
+            'personGender' => 'required|in:male,female',
             'personName' => 'required',
             'personSurname' => 'required',
             'personBirthdate' => 'required|date_format:Y-m-d',
@@ -49,6 +50,7 @@ class FamilyTreeController extends Controller
 
             $person = Person::create([
                 'owner_id' => auth()->user()->id,
+                'gender' => $request->input('personGender'),
                 'name' => $request->input('personName'),
                 'surname' => $request->input('personSurname'),
                 'birthdate' => $request->input('personBirthdate'),
@@ -82,7 +84,9 @@ class FamilyTreeController extends Controller
      */
     public function show($id)
     {
-        $familyTree = FamilyTree::where('owner_id', auth()->user()->id)->findOrFail($id);
+        $familyTree = FamilyTree::where('owner_id', auth()->user()->id)
+            ->with('headPerson')
+            ->findOrFail($id);
 
         return new FamilyTreeResource($familyTree);
     }
