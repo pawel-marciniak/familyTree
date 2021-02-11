@@ -25,6 +25,7 @@ router.beforeEach(async (to, from, next) => {
         localStorage.setItem('user', JSON.stringify(data));
     } catch (error) {
         isAuthenticated = false;
+        localStorage.removeItem('user');
     }
 
     if (to.name !== 'login' && to.name !== 'register' && !isAuthenticated) {

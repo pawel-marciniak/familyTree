@@ -38,6 +38,7 @@
                                         <strong>{{ errors.familyName }}</strong>
                                     </span>
                                 </div>
+
                                 <div class="form-group">
                                     <label for="personGender">Person gender</label>
                                     <select v-model="personGender"
@@ -57,6 +58,7 @@
                                         <strong>{{ errors.personGender }}</strong>
                                     </span>
                                 </div>
+
                                 <div class="form-group">
                                     <label for="personName">Person name</label>
                                     <input v-model="personName"
@@ -74,6 +76,7 @@
                                         <strong>{{ errors.personName }}</strong>
                                     </span>
                                 </div>
+
                                 <div class="form-group">
                                     <label for="personSurname">Person surname</label>
                                     <input v-model="personSurname"
@@ -91,6 +94,7 @@
                                         <strong>{{ errors.personSurname }}</strong>
                                     </span>
                                 </div>
+
                                 <div class="form-group">
                                     <label for="personBirthdate">Person birthdate</label>
                                     <input v-model="personBirthdate"
@@ -156,9 +160,9 @@
             const validationSchema = yup.object({
                 familyName: yup.string().required().label('Family name'),
                 personGender: yup.string().required().oneOf(['male', 'female']).label('Person gender'),
-                personName: yup.string().required().label('Person name'),
-                personSurname: yup.string().required().label('Person surname'),
-                personBirthdate: yup.string().required().label('Person birthdate'),
+                personName: yup.string().required().max(100).label('Person name'),
+                personSurname: yup.string().required().max(100).label('Person surname'),
+                personBirthdate: yup.date().required().label('Person birthdate'),
             });
 
             const { errors, handleSubmit, resetForm } = useForm({

@@ -1,6 +1,10 @@
 <template>
     <div class="container">
         <div class="card">
+            <div class="card-header">
+                Your family trees
+            </div>
+
             <div class="card-body">
                 <button class="btn btn-primary" @click="showModal = true">
                     Add new family tree
@@ -11,17 +15,22 @@
                 </div>
 
                 <table class="table table-hover table-bordered mt-4">
-                    <thead>
+                    <thead class="thead-light">
                         <tr>
                             <th>Name</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="familyTree in familyTrees"
-                                     :key="familyTree.id"
-                                     @click="router.push({ name: 'family-tree', params: { id: familyTree.id } })"
+                            :key="familyTree.id"
+                            class="cursor-pointer"
+                            @click="router.push({ name: 'family-tree', params: { id: familyTree.id } })"
                         >
                             <td>{{ familyTree.name }}</td>
+                            <td class="text-center">
+                                <button class="btn btn-danger btn-sm" @click.stop="deleteFamily(familyTree)">Delete</button>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -69,6 +78,16 @@
                 showModal.value = false;
             };
 
+            const deleteFamily = async (familyTree) => {
+                if (confirm(`Are you sure you want to delete family tree "${familyTree.name}"?`)) {
+                    await axios.delete(`/api/family-trees/${familyTree.id}`);
+
+                    const deletedFamilyIndex = familyTrees.value.findIndex((item) => item.id === familyTree.id);
+
+                    familyTrees.value.splice(deletedFamilyIndex, 1);
+                }
+            };
+
             onMounted(async () => {
                 familyTrees.value = await fetchFamilyTrees();
             })
@@ -78,6 +97,7 @@
                 familyTreesError,
                 showModal,
                 saveFamily,
+                deleteFamily,
                 router,
             }
         }

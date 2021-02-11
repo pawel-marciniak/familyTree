@@ -10,16 +10,6 @@ use Illuminate\Http\Request;
 class PersonController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -39,6 +29,14 @@ class PersonController extends Controller
         $person = null;
 
         try {
+            if ($personData['parent_id']) {
+                $parent = Person::find($personData['parent_id']);
+
+                if ($personData['birthdate'] <= $parent->birthdate) {
+                    throw new \RuntimeException('Birth date can\'t be earlier than parent\'s birth date.');
+                }
+            }
+
             $person = new Person(array_merge(
                 ['owner_id' => auth()->user()->id],
                 $personData,
@@ -50,14 +48,14 @@ class PersonController extends Controller
         } catch (\Exception $e) {
             report($e);
 
-            abort(422, 'Something went wrong while trying to add new person.');
+            abort(422, "Something went wrong while trying to add new person. {$e->getMessage()}");
         }
 
         return new PersonResource($person);
     }
 
     /**
-     * Display the specified resource.
+     * Get person subtree.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
@@ -70,39 +68,5 @@ class PersonController extends Controller
             ->toTree();
 
         return PersonResource::collection($personTree);
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
     }
 }

@@ -92,18 +92,6 @@ class FamilyTreeController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
@@ -111,6 +99,11 @@ class FamilyTreeController extends Controller
      */
     public function destroy($id)
     {
-        //
+        FamilyTree::where([
+            'id' => $id,
+            'owner_id' => auth()->user()->id,
+        ])->delete();
+
+        return response()->noContent();
     }
 }

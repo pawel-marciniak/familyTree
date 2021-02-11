@@ -14,25 +14,35 @@
                     </div>
                 </div>
 
-                <person-tree v-if="headPersonTree"
-                             :person="headPersonTree"
-                />
+                <div class="family-tree-container">
+                    <person-tree v-if="headPersonTree"
+                                 :person="headPersonTree"
+                    />
+                </div>
             </div>
         </div>
+
+        <PersonDescendantsModal :opened="store.state.descendantsModal"
+                                :person="store.state.descendantsModalPerson"
+                                @close="store.commit('hideDescendants')"
+        />
     </div>
 </template>
 
 <script>
     import { ref, watch, onMounted } from 'vue';
     import { useRoute } from 'vue-router';
+    import { useStore } from 'vuex';
     import PersonTree from '../components/PersonTree';
+    import PersonDescendantsModal from '../components/PersonDescendantsModal';
 
     export default {
         name: 'FamilyTree',
 
-        components: { PersonTree },
+        components: { PersonTree, PersonDescendantsModal },
 
         setup() {
+            const store = useStore();
             const route = useRoute();
             const familyTreeData = ref(null);
             const headPersonTree = ref(null);
@@ -42,7 +52,9 @@
             watch(
                 () => route.params,
                 async newParams => {
-                    await fetchFamilyTree(newParams.id);
+                    if (newParams?.id) {
+                        await fetchFamilyTree(newParams.id);
+                    }
                 }
             );
 
@@ -53,7 +65,7 @@
                     const familyTreeResponse = await axios.get(`/api/family-trees/${familyTreeId}`);
                     familyTreeData.value = familyTreeResponse.data.data;
 
-                    const personTreeResponse = await axios.get(`/api/persons/${familyTreeData.value.id}/tree`);
+                    const personTreeResponse = await axios.get(`/api/persons/${familyTreeData.value.headPerson.id}/tree`);
                     [headPersonTree.value] = personTreeResponse.data.data;
                 } catch (error) {
                     serverError.value = `Server error occurred: ${error.response.data.message}`;
@@ -69,7 +81,15 @@
                 headPersonTree,
                 serverError,
                 loading,
+                store,
             }
         }
     }
 </script>
+
+<style lang="scss">
+    .family-tree-container {
+        max-width: 100%;
+        overflow: auto;
+    }
+</style>

@@ -33,6 +33,7 @@ class PersonTest extends TestCase
 
         $personData = [
             'parent_id' => $headPerson->id,
+            'gender' => $this->faker->randomElement(['male', 'female']),
             'name' => $this->faker->firstName,
             'surname' => $this->faker->lastName,
             'birthdate' => $this->faker->date('Y-m-d'),

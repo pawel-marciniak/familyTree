@@ -79,6 +79,7 @@ class FamilyTreeTest extends TestCase
 
         $response = $this->actingAs($user)->json('POST', '/api/family-trees', [
             'name' => $name,
+            'personGender' => $this->faker->randomElement(['male', 'female']),
             'personName' => $this->faker->firstName,
             'personSurname' => $this->faker->lastName,
             'personBirthdate' => $this->faker->date('Y-m-d'),

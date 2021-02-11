@@ -40,6 +40,7 @@
                                         <strong>{{ errors.personGender }}</strong>
                                     </span>
                                 </div>
+
                                 <div class="form-group">
                                     <label for="personName">Person name</label>
                                     <input v-model="personName"
@@ -57,6 +58,7 @@
                                         <strong>{{ errors.personName }}</strong>
                                     </span>
                                 </div>
+
                                 <div class="form-group">
                                     <label for="personSurname">Person surname</label>
                                     <input v-model="personSurname"
@@ -74,6 +76,7 @@
                                         <strong>{{ errors.personSurname }}</strong>
                                     </span>
                                 </div>
+
                                 <div class="form-group">
                                     <label for="personBirthdate">Person birthdate</label>
                                     <input v-model="personBirthdate"
@@ -117,7 +120,7 @@
 </template>
 
 <script>
-    import { watch } from 'vue';
+    import { watch, computed } from 'vue';
     import * as yup from 'yup';
     import { useField, useForm } from 'vee-validate';
 
@@ -147,11 +150,23 @@
         },
 
         setup(props, context) {
+            const parentBirthdate = computed(() => {
+                if (props.parentPerson?.partner?.birthdate < props.parentPerson.birthdate) {
+                    return props.parentPerson.partner.birthdate;
+                }
+
+                return props.parentPerson?.birthdate || '1000-01-01';
+            });
+
             const validationSchema = yup.object({
                 personGender: yup.string().required().oneOf(['male', 'female']).label('Person gender'),
-                personName: yup.string().required().label('Person name'),
-                personSurname: yup.string().required().label('Person surname'),
-                personBirthdate: yup.string().required().label('Person birthdate'),
+                personName: yup.string().required().max(100).label('Person name'),
+                personSurname: yup.string().required().max(100).label('Person surname'),
+                personBirthdate: yup.date().when([], {
+                    is: () =>  props.personType === 'child',
+                    then: yup.date().min(parentBirthdate.value).required().label('Person birthdate'),
+                    otherwise: yup.date().required().label('Person birthdate'),
+                }),
             });
 
             const { errors, handleSubmit, resetForm } = useForm({

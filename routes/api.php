@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\Api\FamilyTreeController;
 use App\Http\Controllers\Api\PersonController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -24,6 +23,7 @@ Route::middleware('auth:sanctum,api')->group(function () {
     Route::get('family-trees', [FamilyTreeController::class, 'index']);
     Route::get('family-trees/{id}', [FamilyTreeController::class, 'show']);
     Route::post('family-trees', [FamilyTreeController::class, 'store']);
+    Route::delete('family-trees/{id}', [FamilyTreeController::class, 'destroy']);
 
     Route::post('persons', [PersonController::class, 'store']);
     Route::get('persons/{id}/tree', [PersonController::class, 'getPersonSubTree']);

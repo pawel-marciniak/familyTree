@@ -3,7 +3,13 @@
         <div :class="{ 'person-tree__couple': localPerson.partner }">
             <Person :person="localPerson"
                     class="person--child"
-            />
+            >
+                <button class="btn btn-info btn-sm person__descendants"
+                        @click="showDescendants(localPerson)"
+                >
+                    <i class="fas fa-info-circle" />
+                </button>
+            </Person>
 
             <Person v-if="localPerson.partner"
                     :person="localPerson.partner"
@@ -53,9 +59,10 @@
 </template>
 
 <script>
-    import { ref, onMounted } from 'vue';
+    import { ref } from 'vue';
     import Person from './Person';
     import PersonModal from './PersonModal';
+    import { useStore } from 'vuex';
 
     export default {
         name: 'PersonTree',
@@ -73,6 +80,7 @@
             const personModal = ref(false);
             const personType = ref('child');
             const localPerson = ref({});
+            const store = useStore();
 
             localPerson.value = props.person;
 
@@ -91,12 +99,17 @@
                 personModal.value = false;
             };
 
+            const showDescendants = (person) => {
+                store.commit('showDescendants', person);
+            };
+
             return {
                 personModal,
                 personType,
                 localPerson,
                 addPerson,
                 savePerson,
+                showDescendants,
             }
         }
     }
@@ -107,6 +120,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+        min-width: min-content;
 
         .person-tree__couple {
             display: flex;

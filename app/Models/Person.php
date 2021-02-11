@@ -25,4 +25,9 @@ class Person extends Model
     {
         return $this->hasOne(self::class, 'partner_id');
     }
+
+    public function headPartner(): belongsTo
+    {
+        return $this->belongsTo(self::class, 'partner_id');
+    }
 }

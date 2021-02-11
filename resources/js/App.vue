@@ -1,9 +1,10 @@
+<link rel="stylesheet" href="../../../../Desktop/_variables.scss">
 <template>
-    <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+    <nav class="navbar navbar-expand-md navbar-light shadow-sm">
         <div class="container">
-            <a class="navbar-brand" href="/">
+            <router-link class="navbar-brand" :to="{ name: 'home' }">
                 FamilyTree
-            </a>
+            </router-link>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="lelele">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -37,7 +38,7 @@
                         </a>
 
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" @click="logout()">
+                            <a href="#" class="dropdown-item" @click.prevent="logout()">
                                Logout
                             </a>
                         </div>
@@ -74,8 +75,8 @@
             const logout = async () => {
                 await axios.post('/api/logout');
 
-                store.commit('setUser', null);
                 localStorage.removeItem('user');
+                store.commit('setUser', null);
 
                 await router.push({ name: 'login' });
             };
