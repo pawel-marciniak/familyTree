@@ -89,9 +89,9 @@
                 children.forEach((child) => {
                     let childYoungest = findYoungest(child.children);
 
-                    if (childYoungest && (youngest === null || childYoungest.birthdate < youngest.birthdate)) {
+                    if (childYoungest && (youngest === null || childYoungest.birthdate > youngest.birthdate)) {
                         youngest = childYoungest;
-                    } else if (youngest === null || child.birthdate < youngest.birthdate) {
+                    } else if (youngest === null || child.birthdate > youngest.birthdate) {
                         youngest = child;
                     }
                 });
