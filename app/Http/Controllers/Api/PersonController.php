@@ -29,7 +29,7 @@ class PersonController extends Controller
         $person = null;
 
         try {
-            if ($personData['parent_id']) {
+            if (isset($personData['parent_id'])) {
                 $parent = Person::find($personData['parent_id']);
 
                 if ($personData['birthdate'] <= $parent->birthdate) {
